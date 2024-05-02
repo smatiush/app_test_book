@@ -1,3 +1,17 @@
+# Copyright Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 ##################################################################################################
 # This file defines the services, service accounts, and deployments for the Bookinfo sample.
 #
@@ -24,7 +38,7 @@ metadata:
     service: details
 spec:
   ports:
-  - port: 9090
+  - port: 9080
     name: http
   selector:
     app: details
@@ -58,12 +72,10 @@ spec:
       serviceAccountName: bookinfo-details
       containers:
       - name: details
-        image: docker.io/istio/examples-bookinfo-details-v1:1.16.4
+        image: docker.io/istio/examples-bookinfo-details-v1:1.18.0
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 9090
-        securityContext:
-          runAsUser: 1000
+        - containerPort: 9080
 ---
 ##################################################################################################
 # Ratings service
@@ -77,7 +89,7 @@ metadata:
     service: ratings
 spec:
   ports:
-  - port: 9090
+  - port: 9080
     name: http
   selector:
     app: ratings
@@ -111,12 +123,10 @@ spec:
       serviceAccountName: bookinfo-ratings
       containers:
       - name: ratings
-        image: docker.io/istio/examples-bookinfo-ratings-v1:1.16.4
+        image: docker.io/istio/examples-bookinfo-ratings-v1:1.18.0
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 9090
-        securityContext:
-          runAsUser: 1000
+        - containerPort: 9080
 ---
 ##################################################################################################
 # Reviews service
@@ -130,7 +140,7 @@ metadata:
     service: reviews
 spec:
   ports:
-  - port: 9090
+  - port: 9080
     name: http
   selector:
     app: reviews
@@ -164,20 +174,18 @@ spec:
       serviceAccountName: bookinfo-reviews
       containers:
       - name: reviews
-        image: docker.io/istio/examples-bookinfo-reviews-v1:1.16.4
+        image: docker.io/istio/examples-bookinfo-reviews-v1:1.18.0
         imagePullPolicy: IfNotPresent
         env:
         - name: LOG_DIR
           value: "/tmp/logs"
         ports:
-        - containerPort: 9090
+        - containerPort: 9080
         volumeMounts:
         - name: tmp
           mountPath: /tmp
         - name: wlp-output
           mountPath: /opt/ibm/wlp/output
-        securityContext:
-          runAsUser: 1000
       volumes:
       - name: wlp-output
         emptyDir: {}
@@ -206,20 +214,18 @@ spec:
       serviceAccountName: bookinfo-reviews
       containers:
       - name: reviews
-        image: docker.io/istio/examples-bookinfo-reviews-v2:1.16.4
+        image: docker.io/istio/examples-bookinfo-reviews-v2:1.18.0
         imagePullPolicy: IfNotPresent
         env:
         - name: LOG_DIR
           value: "/tmp/logs"
         ports:
-        - containerPort: 9090
+        - containerPort: 9080
         volumeMounts:
         - name: tmp
           mountPath: /tmp
         - name: wlp-output
           mountPath: /opt/ibm/wlp/output
-        securityContext:
-          runAsUser: 1000
       volumes:
       - name: wlp-output
         emptyDir: {}
@@ -248,20 +254,18 @@ spec:
       serviceAccountName: bookinfo-reviews
       containers:
       - name: reviews
-        image: docker.io/istio/examples-bookinfo-reviews-v3:1.16.4
+        image: docker.io/istio/examples-bookinfo-reviews-v3:1.18.0
         imagePullPolicy: IfNotPresent
         env:
         - name: LOG_DIR
           value: "/tmp/logs"
         ports:
-        - containerPort: 9090
+        - containerPort: 9080
         volumeMounts:
         - name: tmp
           mountPath: /tmp
         - name: wlp-output
           mountPath: /opt/ibm/wlp/output
-        securityContext:
-          runAsUser: 1000
       volumes:
       - name: wlp-output
         emptyDir: {}
@@ -280,7 +284,7 @@ metadata:
     service: productpage
 spec:
   ports:
-  - port: 9090
+  - port: 9080
     name: http
   selector:
     app: productpage
@@ -307,6 +311,10 @@ spec:
       version: v1
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9080"
+        prometheus.io/path: "/metrics"
       labels:
         app: productpage
         version: v1
@@ -314,15 +322,13 @@ spec:
       serviceAccountName: bookinfo-productpage
       containers:
       - name: productpage
-        image: docker.io/istio/examples-bookinfo-productpage-v1:1.16.4
+        image: docker.io/istio/examples-bookinfo-productpage-v1:1.18.0
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 9090
+        - containerPort: 9080
         volumeMounts:
         - name: tmp
           mountPath: /tmp
-        securityContext:
-          runAsUser: 1000
       volumes:
       - name: tmp
         emptyDir: {}
